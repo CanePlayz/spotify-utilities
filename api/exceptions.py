@@ -1,7 +1,7 @@
 exception_codes = [400, 401, 403, 404, 429, 500, 502, 503]
 
 
-class ErrorException(Exception):
+class APIError(Exception):
 
     def __init__(self, code):
         self.code = code
