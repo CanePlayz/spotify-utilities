@@ -1,5 +1,6 @@
-import classes.artist.methods as m
 import api.exceptions as e
+import classes.artist.methods as m
+import tokens as t
 
 
 class Artist(object):
@@ -7,6 +8,7 @@ class Artist(object):
     def __init__(self, name, id):
         self.name = name
         self.artistID = id
+        self.token = t.get_token()
         self.albums = []
         self.tracks = []
         self.genres = []
@@ -31,7 +33,7 @@ class Artist(object):
     def fetch_albums(self):
         print(f"Fetching albums of {self.name}...")
         try:
-            self.albums = m.fetch_albums.main(self.artistID)
+            self.albums = m.fetch_albums.main(self.artistID, self.token)
         except e.APIError as err:
             print("Error while fetching albums of {}: {} ({})".format(self.name,
                                                                       err.code, e.code_to_str_dict[err.code]))
@@ -43,7 +45,7 @@ class Artist(object):
     def fetch_tracks(self):
         print(f"Fetching tracks of {self.name}...")
         try:
-            self.tracks = m.fetch_tracks.main(self.albums)
+            self.tracks = m.fetch_tracks.main(self.albums, self.token)
         except e.APIError as err:
             print("Error while fetching tracks: " +
                   e.code_to_str_dict[err.code])

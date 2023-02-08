@@ -1,10 +1,9 @@
 import requests
 
 from api.exceptions import APIError
-from tokens import access_token
 
 
-def main(albums):
+def main(albums, token):
 
     # Create variables
     tracks = []
@@ -15,7 +14,7 @@ def main(albums):
         # Send a request to the Spotify API
         query = f"https://api.spotify.com/v1/albums/{album}/tracks"
         response = requests.get(query,
-                                headers={"Authorization": f"Bearer {access_token}"})
+                                headers={"Authorization": f"Bearer {token}"})
 
         # Check if the request was successful
         match response.status_code:
@@ -25,5 +24,10 @@ def main(albums):
         # Add the tracks to the list
         for track in response.json()["items"]:
             tracks.append(track["id"])
+
+    print("With duplicates:" + str(len(tracks)))
+
+    # Remove duplicates
+    tracks = list(set(tracks))
 
     return (tracks)

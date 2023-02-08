@@ -1,10 +1,9 @@
 import requests
 
 from api.exceptions import APIError
-from tokens import access_token
 
 
-def main(artist_id):
+def main(artist_id, token):
 
     # Create variables
     albums = []
@@ -18,7 +17,7 @@ def main(artist_id):
         query = f"https://api.spotify.com/v1/artists/{artist_id}/albums?offset={counter}&limit=50"
         response = requests.get(query,
                                 headers={"Content-Type": "application/json",
-                                         "Authorization": f"Bearer {access_token}"})
+                                         "Authorization": f"Bearer {token}"})
         # Check if the request was successful
         match response.status_code:
             case 200: pass
