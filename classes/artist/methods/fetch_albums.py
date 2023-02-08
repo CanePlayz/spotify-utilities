@@ -8,12 +8,12 @@ def main(artist_id):
     query = "https://api.spotify.com/v1/artists/{}/albums".format(artist_id)
     response = requests.get(query,
                             headers={"Content-Type": "application/json",
-                                     "Authorization": "Bearer {}".format(access_token)})
+                                     "Authorization": "Bearer {}".format(access_token),
+                                     "limit": "50"})
     match response.status_code:
-        case 200: albums = response.json()
+        case 200: pass
         case _: raise APIError(response.status_code)
-    albums_final = []
-    for album in albums["items"]:
-        albums_final = albums_final + album["id"]
-    print(albums_final)
-    return (albums_final)
+    albums = []
+    for album in response.json()["items"]:
+        albums.append(album["id"])
+    return (albums)
