@@ -43,7 +43,7 @@ def main(name, albums, token):
                                            "name": track["name"],
                                            "artists": [track["artists"][i]["name"] for i in range(0, nu_artists)],
                                            "album": album,
-                                           "length": str(round(track["duration_ms"] / 1000 / 60, 2)) + " min",
+                                           "length": str(track["duration_ms"] // 60000) + ":" + str(int((track["duration_ms"] % 60000) / 1000)) + " min",
                                            "spotify-url": track["external_urls"]["spotify"]
                                            }
                         counter += 1
