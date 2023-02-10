@@ -45,13 +45,14 @@ class Artist(object):
     def fetch_tracks(self):
         print(f"Fetching tracks of {self.name}...")
         try:
-            self.tracks = m.fetch_tracks.main(self.albums, self.token)
+            self.tracks = m.fetch_tracks.main(
+                self.name, self.albums, self.token)
         except e.APIError as err:
             print("Error while fetching tracks: " +
                   e.code_to_str_dict[err.code])
         else:
-            print(
-                f"Successfully fetched {len(self.tracks)} tracks of {self.name}.")
+            # print(
+            # f"Successfully fetched {len(self.tracks)} tracks of {self.name}.")
             print("Track IDs: " + str(self.tracks))
 
     def show_artist_info(self):

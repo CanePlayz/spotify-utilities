@@ -3,10 +3,11 @@ import requests
 from api.exceptions import APIError
 
 
-def main(albums, token):
+def main(name, albums, token):
 
     # Create variables
-    tracks = []
+    tracks = {}
+    counter = 0
 
     # Fetch tracks for each album
     for album in albums:
@@ -21,13 +22,25 @@ def main(albums, token):
             case 200: pass
             case _: raise APIError(response.status_code)
 
-        # Add the tracks to the list
+        # Add the tracks
         for track in response.json()["items"]:
-            tracks.append(track["id"])
 
-    print("With duplicates:" + str(len(tracks)))
+            # Check for each artist attribute of the track if it matches the name of the desired artist (filter out tracks from collaboration albums)
+            nu_artists = len(track["artists"])
+            for i in range(0, nu_artists):
+                if track["artists"][i]["name"] == name:
 
-    # Remove duplicates
-    tracks = list(set(tracks))
+                    # Check if this song is already in the list (filter out duplicates)
+                    dupl = False
+                    for possible_duplicate in tracks:
+                        if tracks[possible_duplicate]["name"] == track["name"]:
+                            dupl = True
+                            break
 
-    return (tracks)
+                    # Finally, add the track to the list
+                    if not dupl:
+                        tracks[counter] = {"id": track["id"], "name": track["name"], "main_artist": track["artists"]
+                                           [0]["name"]}
+                        counter += 1
+
+    print(tracks)
