@@ -33,14 +33,19 @@ def main(name, albums, token):
                     # Check if this song is already in the list (filter out duplicates)
                     dupl = False
                     for possible_duplicate in tracks:
-                        if tracks[possible_duplicate]["name"] == track["name"]:
+                        if tracks[possible_duplicate]["name"].casefold() == track["name"].casefold():
                             dupl = True
                             break
 
                     # Finally, add the track to the list
                     if not dupl:
-                        tracks[counter] = {"id": track["id"], "name": track["name"], "main_artist": track["artists"]
-                                           [0]["name"]}
+                        tracks[counter] = {"id": track["id"],
+                                           "name": track["name"],
+                                           "artists": [track["artists"][i]["name"] for i in range(0, nu_artists)],
+                                           "album": album,
+                                           "length": str(round(track["duration_ms"] / 1000 / 60, 2)) + " min",
+                                           "spotify-url": track["external_urls"]["spotify"]
+                                           }
                         counter += 1
 
     print(tracks)

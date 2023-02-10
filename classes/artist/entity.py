@@ -35,8 +35,8 @@ class Artist(object):
         try:
             self.albums = m.fetch_albums.main(self.artistID, self.token)
         except e.APIError as err:
-            print("Error while fetching albums of {}: {} ({})".format(self.name,
-                                                                      err.code, e.code_to_str_dict[err.code]))
+            print(
+                f"Error while fetching albums of {self.name}: {err.code} ({e.code_to_str_dict[err.code]})")
         else:
             print(
                 f"Successfully fetched {len(self.albums)} albums of {self.name}.")
@@ -48,8 +48,8 @@ class Artist(object):
             self.tracks = m.fetch_tracks.main(
                 self.name, self.albums, self.token)
         except e.APIError as err:
-            print("Error while fetching tracks: " +
-                  e.code_to_str_dict[err.code])
+            print(
+                f"Error while fetching tracks of {self.name}: {err.code} ({e.code_to_str_dict[err.code]})")
         else:
             # print(
             # f"Successfully fetched {len(self.tracks)} tracks of {self.name}.")
