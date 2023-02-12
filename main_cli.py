@@ -1,17 +1,58 @@
 import classes as c
 import env as env
 
-client_id = input("Enter your client ID: ")
-client_token = input("Enter your client secret: ")
+import requests
 
-auth_token = env.get_token(client_id, client_token)
+# Check if there are saved credentials
 
-ConnorPrice = c.Artist(name="Connor Price",
-                       id="5zixe6AbgXPqt4c1uSl94L", token=auth_token)
-MalikHarris = c.Artist(name="Malik Harris",
-                       id="7B6Uk58O2DVfg1xZPKEp4n", token=auth_token)
-ImagineDragons = c.Artist(name="Imagine Dragons",
-                          id="53XhwfbYqKCa1cC15pYq2q", token=auth_token)
+""" if:
+else:
+    client_id = input("Enter your client ID: ")
+    client_secret = input("Enter your client secret: ") """
 
-MalikHarris.fetch_albums()
-MalikHarris.fetch_tracks()
+
+# id = input("Enter the ID of the song/artist/album: ")
+
+# Inputs
+
+
+# Try to get a token
+
+try:
+    token = env.get_token(client_id, client_secret)
+except:
+    print("Wrong credentials entered.")
+else:
+
+    # Check for a song
+
+    query = "https://api.spotify.com/v1/tracks/" + id
+    response = requests.get(query,
+                            headers={"Content-Type": "application/json",
+                                     "Authorization": f"Bearer {token}"})
+    if response.status_code == 200:
+        print("\"{}\" has been found!".format(response.json()["name"]))
+    else:
+
+        # Check for an album
+
+        query = "https://api.spotify.com/v1/albums/" + id
+        response = requests.get(query,
+                                headers={"Content-Type": "application/json",
+                                         "Authorization": f"Bearer {token}"})
+        if response.status_code == 200:
+            print("\"{}\" has been found!".format(response.json()["name"]))
+        else:
+
+            # Check for an artist
+
+            query = "https://api.spotify.com/v1/artists/" + id
+            response = requests.get(query,
+                                    headers={"Content-Type": "application/json",
+                                             "Authorization": f"Bearer {token}"})
+
+            if response.status_code == 200:
+                print("\"{}\" has been found!".format(response.json()["name"]))
+                print("Wrong credentials entered.")
+            else:
+                print("Nothing could be found.")
