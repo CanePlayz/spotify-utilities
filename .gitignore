@@ -1,4 +1,3 @@
 __pycache__
 .vscode
-spotifyapi.txt
-tokens.py
+get_token.py

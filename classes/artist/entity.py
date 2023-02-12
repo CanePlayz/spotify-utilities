@@ -1,6 +1,6 @@
 import api.exceptions as e
 import classes.artist.methods as m
-import tokens as t
+import env as env
 
 
 class Artist(object):
@@ -8,7 +8,7 @@ class Artist(object):
     def __init__(self, name, id):
         self.name = name
         self.artistID = id
-        self.token = t.get_token()
+        self.token = env.get_token()
         self.albums = []
         self.tracks = []
         self.genres = []
