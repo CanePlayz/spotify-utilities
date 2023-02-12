@@ -1,20 +1,19 @@
-import classes as c
-import env as env
-
 import requests
+
+import classes as c
+import env.credentials as env
 
 # Check if there are saved credentials
 
-""" if:
+if env.check_for_credentials():
+    client_id, client_secret = env.get_credentials()
 else:
     client_id = input("Enter your client ID: ")
-    client_secret = input("Enter your client secret: ") """
+    client_secret = input("Enter your client secret: ")
+    f = open("credentials.txt", "w")
+    f.write(client_id + "\n" + client_secret)
 
-
-# id = input("Enter the ID of the song/artist/album: ")
-
-# Inputs
-
+id = input("Enter the ID of the song/artist/album: ")
 
 # Try to get a token
 
@@ -53,6 +52,5 @@ else:
 
             if response.status_code == 200:
                 print("\"{}\" has been found!".format(response.json()["name"]))
-                print("Wrong credentials entered.")
             else:
                 print("Nothing could be found.")
