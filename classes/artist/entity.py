@@ -5,10 +5,10 @@ import env as env
 
 class Artist(object):
 
-    def __init__(self, name, id):
+    def __init__(self, name, id, token):
         self.name = name
         self.artistID = id
-        self.token = env.get_token()
+        self.token = token
         self.albums = []
         self.tracks = []
         self.genres = []
