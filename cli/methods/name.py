@@ -67,7 +67,7 @@ def name(token):
             artist = c.Artist(response.json()["artists"]["items"][pos - 1]["name"],
                               response.json()[f"{type}s"]["items"][pos - 1]["id"], token)
 
-            artist.print_tracks()
+            artist.print_albums()
 
         # Search results for albums
         elif type == "album":
@@ -85,5 +85,3 @@ def name(token):
             print(SingleTable(results).table)
 
             print("Which album would you like to work with?")
-
-            pos = int(input("Which album would you like to work with?"))

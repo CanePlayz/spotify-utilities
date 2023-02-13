@@ -58,3 +58,6 @@ class Artist(object):
 
     def print_tracks(self):
         m.print_tracks.main(self.tracks)
+
+    def print_albums(self):
+        m.print_albums.main(self.albums)

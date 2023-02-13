@@ -6,7 +6,7 @@ from api.exceptions import APIError
 def main(artist_id, token):
 
     # Create variables
-    albums = []
+    albums = {}
     limit_reached = False
     counter = 0
 
@@ -23,9 +23,16 @@ def main(artist_id, token):
             case 200: pass
             case _: raise APIError(response.status_code)
 
-        # Add the albums to the list
+        # Add the albums
         for album in response.json()["items"]:
-            albums.append(album["id"])
+            albums[counter] = {"id": album["id"],
+                               "name": album["name"],
+                               "artists": [album["artists"][i]["name"] for i in range(0, len(album["artists"]))],
+                               # "genres": album["genres"],
+                               "spotify-url": album["external_urls"]["spotify"],
+                               "type": album["album_type"]
+                               }
+            counter += 1
 
         # Check if there are more albums to fetch
         if response.json()["next"] == None:
@@ -33,4 +40,5 @@ def main(artist_id, token):
         else:
             counter += 50
 
+    print(albums)
     return (albums)
