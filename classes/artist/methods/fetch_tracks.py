@@ -48,4 +48,4 @@ def main(name, albums, token):
                                            }
                         counter += 1
 
-    print(tracks)
+    return (tracks)

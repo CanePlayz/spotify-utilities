@@ -1,3 +1,3 @@
-import cli.start as cli
+import cli.initialize as cli
 
-cli.start()
+cli.main()
