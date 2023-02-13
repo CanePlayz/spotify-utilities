@@ -2,8 +2,8 @@
 
 ## What is this project about?
 
-This will be a collection of useful Spotify tools. It will be available as a web app and as a command line tool.
+This will be a collection of useful Spotify tools. It will be available as a GUI and CLI tool.
 
 ## State of the project
 
-This project is currently in development. It doesn't work yet.
+This project is currently in a very early stage of development. It is not usable yet.
