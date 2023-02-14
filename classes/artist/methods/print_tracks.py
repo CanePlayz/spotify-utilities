@@ -6,24 +6,16 @@ import utilities.short_strings as short
 def main(tracks):
 
     # Create table header
-    data = [["Name", "Artists",
-             "Album", "Length", "ID", "Spotify URL"]]
+    data = [["Name", "Artists", "Length",
+             "Album", "ID", "Spotify URL"]]
 
     # Convert dictionary to list
     for i in tracks:
 
-        # Limit the number of artists to 4
-        artists_limited = []
-        if len(tracks[i]["artists"]) > 4:
-            limit = 4
-        else:
-            limit = len(tracks[i]["artists"])
-        for j in range(0, limit):
-            artists_limited.append(tracks[i]["artists"][j])
-
         row = [short.track(tracks[i]["name"]),
-               ", ".join(artists_limited), tracks[i]["album"],
+               short.artists(", ".join(tracks[i]["artists"])),
                tracks[i]["length"],
+               short.album(tracks[i]["album"]),
                tracks[i]["id"],
                tracks[i]["spotify-url"]]
 

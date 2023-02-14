@@ -8,6 +8,8 @@ def main():
     if env.check_for_credentials():
         client_id, client_secret = env.get_credentials()
     else:
+        print("If you want to see all tracks or albums of an artist in the terminal, it is recommended to maximize the window.")
+        print("In order to make API requests, you need to create a Spotify application.b593e2d12d0a4472a1cf73abe9f05652")
         client_id = input("Enter your client ID: ")
         client_secret = input("Enter your client secret: ")
         f = open("credentials.txt", "w")
