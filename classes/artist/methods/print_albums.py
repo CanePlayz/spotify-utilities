@@ -11,6 +11,7 @@ def main(albums):
 
         # Check if album is an actual album
         if albums[i]["type"] == "album":
+
             row = [albums[i]["id"], albums[i]["name"], ", ".join(
                 albums[i]["artists"]), albums[i]["spotify-url"]]
             data.append(row)

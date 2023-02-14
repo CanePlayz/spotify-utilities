@@ -3,6 +3,7 @@ from terminaltables import SingleTable
 
 import classes as c
 import env as env
+import cli.actions as a
 
 
 def name(token):
@@ -67,7 +68,7 @@ def name(token):
             artist = c.Artist(response.json()["artists"]["items"][pos - 1]["name"],
                               response.json()[f"{type}s"]["items"][pos - 1]["id"], token)
 
-            artist.print_albums()
+            a.actions_artist(artist)
 
         # Search results for albums
         elif type == "album":

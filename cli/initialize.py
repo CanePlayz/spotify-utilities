@@ -1,5 +1,5 @@
 import env as env
-import cli.methods as m
+import cli.search as s
 
 
 def main():
@@ -29,9 +29,9 @@ def main():
 
             if search_by == "name":
                 valid = True
-                m.name(token)
+                s.name(token)
             elif search_by == "id":
                 valid = True
-                m.id(token)
+                s.id(token)
             else:
                 print("Invalid input.")
