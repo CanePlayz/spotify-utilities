@@ -1,11 +1,13 @@
 from terminaltables import SingleTable
 
+import utilities.short_strings as short
+
 
 def main(tracks):
 
     # Create table header
-    data = [["Album ID", "Track Name", "Artists",
-             "Album", "Length", "Spotify URL"]]
+    data = [["Name", "Artists",
+             "Album", "Length", "ID", "Spotify URL"]]
 
     # Convert dictionary to list
     for i in tracks:
@@ -19,8 +21,12 @@ def main(tracks):
         for j in range(0, limit):
             artists_limited.append(tracks[i]["artists"][j])
 
-        row = [tracks[i]["id"], tracks[i]["name"], ", ".join(
-            artists_limited), tracks[i]["album"], tracks[i]["length"], tracks[i]["spotify-url"]]
+        row = [short.track(tracks[i]["name"]),
+               ", ".join(artists_limited), tracks[i]["album"],
+               tracks[i]["length"],
+               tracks[i]["id"],
+               tracks[i]["spotify-url"]]
+
         data.append(row)
 
     print(SingleTable(data).table)

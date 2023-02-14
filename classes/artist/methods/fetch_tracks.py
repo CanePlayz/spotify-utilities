@@ -10,10 +10,11 @@ def main(name, albums, token):
     counter = 0
 
     # Fetch tracks for each album
-    for album in albums:
+    for i in albums:
 
         # Send a request to the Spotify API
-        query = f"https://api.spotify.com/v1/albums/{album}/tracks"
+        query = "https://api.spotify.com/v1/albums/{}/tracks".format(
+            albums[i]["id"])
         response = requests.get(query,
                                 headers={"Authorization": f"Bearer {token}"})
 
@@ -42,7 +43,7 @@ def main(name, albums, token):
                         tracks[counter] = {"id": track["id"],
                                            "name": track["name"],
                                            "artists": [track["artists"][i]["name"] for i in range(0, nu_artists)],
-                                           "album": album,
+                                           "album": albums[i]["name"],
                                            "length": str(track["duration_ms"] // 60000) + ":" + str(int((track["duration_ms"] % 60000) / 1000)) + " min",
                                            "spotify-url": track["external_urls"]["spotify"]
                                            }

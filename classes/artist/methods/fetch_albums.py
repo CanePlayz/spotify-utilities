@@ -40,5 +40,4 @@ def main(artist_id, token):
         else:
             counter += 50
 
-    print(albums)
     return (albums)
