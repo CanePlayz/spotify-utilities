@@ -25,15 +25,15 @@ def main():
         # Ask user if they want to search by id or name
         valid = False
 
-        while valid == False:
+        while valid is False:
 
             search_by = input("Search by ID or name? (id/name): ")
 
             if search_by == "name":
                 valid = True
-                s.name(token)
+                s.search_by_name(token)
             elif search_by == "id":
                 valid = True
-                s.id(token)
+                s.search_by_id(token)
             else:
                 print("Invalid input.")

@@ -6,12 +6,12 @@ import env as env
 import cli.actions as a
 
 
-def name(token):
+def search_by_name(token):
 
     valid = False
     type = ""
 
-    while valid == False:
+    while valid is False:
 
         type = input(
             "Search for track, artist, or album? (track/artist/album): ")

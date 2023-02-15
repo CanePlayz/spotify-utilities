@@ -3,7 +3,7 @@ import requests
 from api.exceptions import APIError
 
 
-def main(name, albums, token):
+def main(artist, albums, token):
 
     # Create variables
     tracks = {}
@@ -27,26 +27,19 @@ def main(name, albums, token):
         for track in response.json()["items"]:
 
             # Check for each artist attribute of the track if it matches the name of the desired artist (filter out tracks from collaboration albums)
-            nu_artists = len(track["artists"])
-            for i in range(0, nu_artists):
-                if track["artists"][i]["name"] == name:
+            if any(artist_to_check["name"] == artist for artist_to_check in track["artists"]):
 
-                    # Check if this song is already in the list (filter out duplicates)
-                    dupl = False
-                    for possible_duplicate in tracks:
-                        if tracks[possible_duplicate]["name"].casefold() == track["name"].casefold():
-                            dupl = True
-                            break
+                # Check if this song is already in the list (filter out duplicates)
+                if not (any(possible_dupl["name"].casefold() == track["name"].casefold() for possible_dupl in tracks.values())):
 
-                    # Finally, add the track to the list
-                    if not dupl:
-                        tracks[counter] = {"id": track["id"],
-                                           "name": track["name"],
-                                           "artists": [track["artists"][i]["name"] for i in range(0, nu_artists)],
-                                           "album": albums[i]["name"],
-                                           "length": str(track["duration_ms"] // 60000) + ":" + str(int((track["duration_ms"] % 60000) / 1000)).zfill(2) + " min",
-                                           "spotify-url": track["external_urls"]["spotify"]
-                                           }
-                        counter += 1
+                    # Finally, add the tracks with corresponding data to the tracks dictionary
+                    tracks[counter] = {"id": track["id"],
+                                       "name": track["name"],
+                                       "artists": [i["name"] for i in track["artists"]],
+                                       "album": albums[i]["name"],
+                                       "length": str(track["duration_ms"] // 60000) + ":" + str(int((track["duration_ms"] % 60000) / 1000)).zfill(2) + " min",
+                                       "spotify-url": track["external_urls"]["spotify"]
+                                       }
+                    counter += 1
 
     return (tracks)

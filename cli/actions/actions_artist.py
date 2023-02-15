@@ -1,7 +1,7 @@
 def actions_artist(artist):
     valid = False
 
-    while valid == False:
+    while valid is False:
 
         prompt = input(
             "What would you like to do? (print_albums/print_tracks): ")

@@ -5,7 +5,7 @@ import classes as c
 import env as env
 
 
-def id(token):
+def search_by_id(token):
 
     id = input("Enter the ID of the song/artist/album: ")
 

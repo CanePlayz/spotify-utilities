@@ -10,14 +10,14 @@ def main(tracks):
              "Album", "ID", "Spotify URL"]]
 
     # Convert dictionary to list
-    for i in tracks:
+    for track in tracks.values():
 
-        row = [short.track(tracks[i]["name"]),
-               short.artists(", ".join(tracks[i]["artists"])),
-               tracks[i]["length"],
-               short.album(tracks[i]["album"]),
-               tracks[i]["id"],
-               tracks[i]["spotify-url"]]
+        row = [short.track(track["name"]),
+               short.artists(", ".join(track["artists"])),
+               track["length"],
+               short.album(track["album"]),
+               track["id"],
+               track["spotify-url"]]
 
         data.append(row)
 
