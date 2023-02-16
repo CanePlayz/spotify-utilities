@@ -1,19 +1,26 @@
 def track(string):
-    if len(string) > 39:
-        return (string[0:37] + "...")
+    if len(string) > 30:
+        return (string[0:28] + "...")
     else:
-        return (string[0:40])
+        return (string)
 
 
 def artists(string):
-    if len(string) > 39:
-        return (string[0:37] + "...")
+    if len(string) > 30:
+        return (string[0:28] + "...")
     else:
-        return (string[0:40])
+        return (string)
 
 
 def album(string):
-    if len(string) > 39:
-        return (string[0:37] + "...")
+    if len(string) > 30:
+        return (string[0:28] + "...")
     else:
-        return (string[0:40])
+        return (string)
+
+
+def copyright(string):
+    if len(string) > 63:
+        return (string[0:61] + "...")
+    else:
+        return (string)

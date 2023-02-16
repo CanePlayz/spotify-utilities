@@ -1,40 +1,39 @@
+from terminaltables import SingleTable
+import utilities.short_strings as short
+
+
 def print_album_info(name, id, url, info):
-    print(f"Name: {name}")
-    print(f"ID: {id}")
-    print(f"Spotify URL: {url}")
+    data = [["Property", "Value"]]
+    data.append(["Name", name])
+    data.append(["ID", id])
     if info["release_date"] == None:
-        print("Release date: Unknown")
+        data.append(["Release date", "Unknown"])
     else:
-        print(f"Release date: {info['release_date']}")
-    print(f"Artists: {', '.join(info['artists'])}")
-    print(f"Album type: {info['album_type']}")
-    print(f"Total tracks: {info['total_tracks']}")
+        data.append(["Release date", info['release_date']])
+    if len(info["artists"]) == 1:
+        data.append(["Artist", info['artists'][0]])
+    else:
+        data.append(["Artists", ', '.join(info['artists'])])
+    data.append(["Album type", info['album_type']])
+    data.append(["Total tracks", info['total_tracks']])
     if info["genres"] == []:
-        print("Genres: Unknown")
+        data.append(["Genres", "Unknown"])
     else:
-        print("Genres: {}".format(", ".join(info["genres"])))
-    print(f"Popularity: {info['popularity']}")
+        data.append(["Genres", (", ".join(info["genres"])).capitalize()])
+    data.append(["Popularity", info['popularity']])
     if info["label"] == None:
-        print("Label: Unknown")
+        data.append(["Label", "Unknown"])
     else:
-        print(f"Label: {info['label']}")
+        data.append(["Label", info['label']])
     if info["images"] == []:
-        print("Images: Unknown")
+        data.append(["Cover", "Unknown"])
     else:
-        print(f"Images: {', '.join(info['images'])}")
+        data.append(["Cover", (info['images'][0])])
     if info["copyright"] == []:
-        print("Copyright: Unknown")
+        data.append(["Copyright", "Unknown"])
     else:
-        print(f"Copyright: {', '.join(info['copyright'])}")
-    # if info["isrc"] == "":
-    #     print("ISRC: Unknown")
-    # else:
-    #     print(f"ISRC: {info['isrc']}")
-    # if info["ean"] == "":
-    #     print("EAN: Unknown")
-    # else:
-    #     print(f"EAN: {info['ean']}")
-    # if info["upc"] == "":
-    #     print("UPC: Unknown")
-    # else:
-    #     print(f"UPC: {info['upc']}")
+        data.append(["Copyright", short.copyright(
+            ', '.join(info['copyright']))])
+    data.append(["Spotify URL", url])
+
+    print(SingleTable(data).table)

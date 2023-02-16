@@ -1,14 +1,17 @@
+from terminaltables import SingleTable
+
+
 def print_artist_info(name, id, url, info):
-    print(f"Name: {name}")
-    print(f"ID: {id}")
-    print(f"Spotify URL: {url}")
+    data = [["Property", "Value"]]
+    data.append(["Name", name])
+    data.append(["ID", id])
     if info["genres"] == []:
-        print("Genres: Unknown")
+        data.append(["Genres", "Unknown"])
     else:
-        print("Genres: {}".format(", ".join(info["genres"])))
-    print(f"Followers: {info['followers']}")
-    print(f"Popularity: {info['popularity']}")
-    if info["images"] == []:
-        print("Images: Unknown")
-    else:
-        print(f"Images: {', '.join(info['images'])}")
+        data.append(["Genres", (", ".join(info["genres"])).capitalize()])
+    data.append(["Followers", info['followers']])
+    data.append(["Popularity", info['popularity']])
+    data.append(["Image", info['images'][0]])
+    data.append(["Spotify URL", url])
+
+    print(SingleTable(data).table)
