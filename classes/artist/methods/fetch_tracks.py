@@ -3,7 +3,7 @@ import requests
 from api.exceptions import APIError
 
 
-def main(artist, albums, token):
+def fetch_tracks(artist, albums, token):
 
     # Create variables
     tracks = {}
@@ -30,7 +30,7 @@ def main(artist, albums, token):
             if any(artist_to_check["name"] == artist for artist_to_check in track["artists"]):
 
                 # Check if this song is already in the list (filter out duplicates)
-                if not (any(possible_dupl["name"].casefold() == track["name"].casefold() for possible_dupl in tracks.values())):
+                if not (any(possible_duplicate["name"].casefold() == track["name"].casefold() for possible_duplicate in tracks.values())):
 
                     # Finally, add the tracks with corresponding data to the tracks dictionary
                     tracks[counter] = {"id": track["id"],

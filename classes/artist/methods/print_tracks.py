@@ -3,7 +3,7 @@ from terminaltables import SingleTable
 import utilities.short_strings as short
 
 
-def main(tracks):
+def print_tracks(tracks):
 
     # Create table header
     data = [["Name", "Artists", "Length",

@@ -3,7 +3,7 @@ import requests
 from api.exceptions import APIError
 
 
-def main(artist_id, token):
+def fetch_albums(artist_id, token):
 
     # Create variables
     albums = {}
