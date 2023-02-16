@@ -43,7 +43,8 @@ def search_for_track(token):
             print(SingleTable(results).table)
 
             # Ask the user which track they want to work with and create an object
-            pos = int(input("Which artist would you like to work with? "))
+            pos = int(
+                input("Which track would you like to work with? (Enter the number): "))
             track = c.Track(response.json()["tracks"]["items"][pos - 1]["name"],
                             response.json()["tracks"]["items"][pos - 1]["id"], token)
             return (track)
@@ -71,7 +72,8 @@ def search_for_artist(token):
             print(SingleTable(results).table)
 
             # Ask the user which artist they want to work with and create an object
-            pos = int(input("Which artist would you like to work with? "))
+            pos = int(
+                input("Which artist would you like to work with? (Enter the number): "))
             artist = c.Artist(response.json()["artists"]["items"][pos - 1]["name"],
                               response.json()["artists"]["items"][pos - 1]["id"], token)
             return (artist)
@@ -100,7 +102,8 @@ def search_for_album(token):
             print(SingleTable(results).table)
 
             # Ask the user which album they want to work with and create an object
-            pos = int(input("Which artist would you like to work with? "))
+            pos = int(
+                input("Which album would you like to work with? (Enter the number): "))
             album = c.Album(response.json()["albums"]["items"][pos - 1]["name"],
                             response.json()["albums"]["items"][pos - 1]["id"], token)
             return (album)

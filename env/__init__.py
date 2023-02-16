@@ -1,1 +1,2 @@
-from .credentials import get_credentials, check_for_credentials, get_token
+from .credentials import (check_for_credentials, enter_credentials, get_token,
+                          retrieve_credentials)

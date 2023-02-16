@@ -1,22 +1,36 @@
 import cli.prompts as prompts
 import cli.search as search
-import cli.start as start
 import classes
+import env as env
 
 
 class CLI(object):
 
+    def __init__(self):
+        print("If you want to see all tracks or albums of an artist in the terminal, it is recommended to maximize the window.")
+        print("In order to make API requests, you need to create a Spotify application. Checking for saved credentials...")
+
     def get_credentials(self):
-        self.client_id, self.client_secret = start.get_credentials()
+        if env.check_for_credentials():
+            print("Credentials found.")
+            self.client_id, self.client_secret = env.retrieve_credentials()
+        else:
+            print(
+                "No credentials found. Please enter your client ID and client secret.")
+            self.client_id, self.client_secret = env.enter_credentials()
         self.get_token()
 
     def get_token(self):
         print("Trying to get token...")
-        self.token = start.get_token(self.client_id, self.client_secret)
-        if self.token == None:
-            self.get_credentials()
+        try:
+            self.token = env.get_token(self.client_id, self.client_secret)
+        except:
+            print(
+                "Could not retrieve token. Please check your credentials and enter them again.")
+            self.client_id, self.client_secret = env.enter_credentials()
             self.get_token()
         else:
+            print("Token successfully retrieved.")
             self.get_search_method()
 
     def get_search_method(self):
