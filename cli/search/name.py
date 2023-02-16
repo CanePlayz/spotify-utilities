@@ -6,11 +6,8 @@ import env as env
 
 
 def ask_for_type():
-
-    valid = False
-    type = ""
-
-    while valid is False:
+    # Ask user for input as long as no valid input has been provided
+    while True:
 
         type = input(
             "Search for track, artist, or album? (track/artist/album): ")

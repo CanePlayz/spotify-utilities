@@ -1,6 +1,7 @@
 import cli.prompts as prompts
 import cli.search as search
 import cli.start as start
+import classes
 
 
 class CLI(object):
@@ -48,6 +49,21 @@ class CLI(object):
             self.action = prompts.actions_artist(self.object)
         # elif self.type == "album":
             # self.action = actions.actions_album(self.object)
+        self.perform_action()
+
+    def perform_action(self):
+        if self.type == "artist":
+            assert isinstance(self.object, classes.Artist)
+            if self.action == "print_info":
+                self.object.print_artist_info()
+            elif self.action == "print_albums":
+                self.object.print_albums()
+            elif self.action == "print_tracks":
+                self.object.print_tracks()
+        elif self.type == "album":
+            pass
+        elif self.type == "track":
+            pass
         self.continue_prompt()
 
     def continue_prompt(self):
@@ -55,6 +71,6 @@ class CLI(object):
         if next == "exit":
             exit()
         elif next == "new_search":
-            self.search_method()
+            self.get_search_method()
         elif next == "new_command":
             self.get_action()
