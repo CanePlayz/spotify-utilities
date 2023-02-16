@@ -49,11 +49,11 @@ class CLI(object):
 
     def search(self):
         if self.type == "track":
-            self.object = search.search_for_track(self.token)
+            self.object = search.search_for_tracks(self.token)
         elif self.type == "artist":
-            self.object = search.search_for_artist(self.token)
+            self.object = search.search_for_artists(self.token)
         elif self.type == "album":
-            self.object = search.search_for_album(self.token)
+            self.object = search.search_for_albums(self.token)
         self.get_action()
 
     def get_action(self):
@@ -61,8 +61,8 @@ class CLI(object):
         # self.action = actions.actions_track(self.object)
         if self.type == "artist":
             self.action = prompts.actions_artist(self.object)
-        # elif self.type == "album":
-            # self.action = actions.actions_album(self.object)
+        elif self.type == "album":
+            self.action = prompts.actions_album(self.object)
         self.perform_action()
 
     def perform_action(self):
@@ -75,9 +75,13 @@ class CLI(object):
             elif self.action == "print_tracks":
                 self.object.print_tracks()
         elif self.type == "album":
-            pass
-        elif self.type == "track":
-            pass
+            assert isinstance(self.object, classes.Album)
+            if self.action == "print_info":
+                self.object.print_album_info()
+            elif self.action == "print_tracks":
+                self.object.print_tracks()
+        # move to beginning elif self.type == "track":
+        #    pass
         self.continue_prompt()
 
     def continue_prompt(self):

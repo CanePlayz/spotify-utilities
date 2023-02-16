@@ -5,3 +5,5 @@ def search_method(token):
         valid_inputs = ["id", "name"]
         if any(method == check for check in valid_inputs):
             return (method)
+        else:
+            print("Invalid input.")

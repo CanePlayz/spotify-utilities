@@ -20,7 +20,7 @@ def ask_for_type():
             print("Invalid input.")
 
 
-def search_for_track(token):
+def search_for_tracks(token):
     # Create a list of search results
     results = [["#", "Name", "Artist"]]
 
@@ -32,7 +32,7 @@ def search_for_track(token):
                                      "Authorization": f"Bearer {token}"})
 
     # Check if there are any results
-    if len(response.json()[f"{type}s"]["items"]) == 0:
+    if len(response.json()[f"tracks"]["items"]) == 0:
         print("Nothing could be found.")
     else:
         for i, item in enumerate(response.json()["tracks"]["items"]):
@@ -50,7 +50,7 @@ def search_for_track(token):
             return (track)
 
 
-def search_for_artist(token):
+def search_for_artists(token):
     # Create a list of search results
     results = [["#", "Name"]]
 
@@ -79,7 +79,7 @@ def search_for_artist(token):
             return (artist)
 
 
-def search_for_album(token):
+def search_for_albums(token):
     # Create a list of search results
     results = [["#", "Name", "Artist"]]
 
@@ -91,7 +91,7 @@ def search_for_album(token):
                                      "Authorization": f"Bearer {token}"})
 
     # Check if there are any results
-    if len(response.json()[f"{type}s"]["items"]) == 0:
+    if len(response.json()["albums"]["items"]) == 0:
         print("Nothing could be found.")
     else:
         for i, item in enumerate(response.json()["albums"]["items"]):

@@ -1,6 +1,5 @@
-import api.exceptions as e
+import api.exceptions as exceptions
 import classes.artist.methods as methods
-import env as env
 
 
 class Artist(object):
@@ -18,10 +17,10 @@ class Artist(object):
         print(f"Fetching information of {self.name}...")
         try:
             self.info = methods.fetch_artist_info(self.id, self.token)
-        except e.APIError as err:
+        except exceptions.APIError as err:
             print(
                 "Error while fetching information of {}}...: {} ({})".format(self.name,
-                                                                             err.code, e.code_to_str_dict[err.code]))
+                                                                             err.code, exceptions.code_to_str_dict[err.code]))
         else:
             print(f"Successfully fetched information of {self.name}.")
 
@@ -30,9 +29,9 @@ class Artist(object):
         try:
             self.albums = methods.fetch_albums(
                 self.id, self.token)
-        except e.APIError as err:
+        except exceptions.APIError as err:
             print(
-                f"Error while fetching albums of {self.name}: {err.code} ({e.code_to_str_dict[err.code]})")
+                f"Error while fetching albums of {self.name}: {err.code} ({exceptions.code_to_str_dict[err.code]})")
         else:
             print(
                 f"Successfully fetched {len(self.albums)} albums of {self.name}.")
@@ -42,9 +41,9 @@ class Artist(object):
         try:
             self.tracks = methods.fetch_tracks(
                 self.name, self.albums, self.token)
-        except e.APIError as err:
+        except exceptions.APIError as err:
             print(
-                f"Error while fetching tracks of {self.name}: {err.code} ({e.code_to_str_dict[err.code]})")
+                f"Error while fetching tracks of {self.name}: {err.code} ({exceptions.code_to_str_dict[err.code]})")
         else:
             print(
                 f"Successfully fetched {len(self.tracks)} tracks of {self.name}.")
