@@ -3,10 +3,9 @@ from terminaltables import SingleTable
 
 import classes as c
 import env as env
-import cli.actions as a
 
 
-def search_by_name(token):
+def ask_for_type():
 
     valid = False
     type = ""
@@ -16,14 +15,21 @@ def search_by_name(token):
         type = input(
             "Search for track, artist, or album? (track/artist/album): ")
 
-        if type != "track" and type != "artist" and type != "album":
-            print("Invalid input.")
+        valid_inputs = ["track", "artist", "album"]
+
+        if any(type == check for check in valid_inputs):
+            return (type)
         else:
-            valid = True
+            print("Invalid input.")
 
-    name = input(f"Enter the name of the {type}: ")
 
-    query = f"https://api.spotify.com/v1/search?q={name}&type={type}"
+def search_for_track(token):
+    # Create a list of search results
+    results = [["#", "Name", "Artist"]]
+
+    # Send a search request to the Spotify API
+    name = input(f"Enter the name of the track: ")
+    query = f"https://api.spotify.com/v1/search?q={name}&type=track"
     response = requests.get(query,
                             headers={"Content-Type": "application/json",
                                      "Authorization": f"Bearer {token}"})
@@ -32,57 +38,72 @@ def search_by_name(token):
     if len(response.json()[f"{type}s"]["items"]) == 0:
         print("Nothing could be found.")
     else:
+        for i, item in enumerate(response.json()["tracks"]["items"]):
+            results.append([str(i + 1), item["name"],
+                           item["artists"][0]["name"]])
 
-        # Search results for tracks
-        i = 1
-        results = [["#", "Name", "Artist"]]
-
-        if type == "track":
-
-            print("Search results:")
-
-            for item in response.json()[f"{type}s"]["items"]:
-                results.append(
-                    [str(i), item["name"], item["artists"][0]["name"]])
-                i += 1
-
+            # Print the search results
             print(SingleTable(results).table)
 
-            print("Which song would you like to work with? ")
+            # Ask the user which track they want to work with and create an object
+            pos = int(input("Which artist would you like to work with? "))
+            track = c.Track(response.json()["tracks"]["items"][pos - 1]["name"],
+                            response.json()["tracks"]["items"][pos - 1]["id"], token)
+            return (track)
 
-        # Search results for artists
-        elif type == "artist":
 
-            i = 1
-            results = [["#", "Name"]]
+def search_for_artist(token):
+    # Create a list of search results
+    results = [["#", "Name"]]
 
-            print("Search results:")
+    # Send a search request to the Spotify API
+    name = input(f"Enter the name of the artist: ")
+    query = f"https://api.spotify.com/v1/search?q={name}&type=artist"
+    response = requests.get(query,
+                            headers={"Content-Type": "application/json",
+                                     "Authorization": f"Bearer {token}"})
 
-            for item in response.json()[f"{type}s"]["items"]:
-                results.append([str(i), item["name"]])
-                i += 1
+    # Check if there are any results
+    if len(response.json()[f"artists"]["items"]) == 0:
+        print("Nothing could be found.")
+    else:
+        for i, item in enumerate(response.json()["artists"]["items"]):
+            results.append([str(i + 1), item["name"]])
 
+            # Print the search results
             print(SingleTable(results).table)
 
+            # Ask the user which artist they want to work with and create an object
             pos = int(input("Which artist would you like to work with? "))
             artist = c.Artist(response.json()["artists"]["items"][pos - 1]["name"],
-                              response.json()[f"{type}s"]["items"][pos - 1]["id"], token)
+                              response.json()["artists"]["items"][pos - 1]["id"], token)
+            return (artist)
 
-            a.actions_artist(artist)
 
-        # Search results for albums
-        elif type == "album":
+def search_for_album(token):
+    # Create a list of search results
+    results = [["#", "Name", "Artist"]]
 
-            i = 1
-            results = [["#", "Name", "Artist"]]
+    # Send a search request to the Spotify API
+    name = input(f"Enter the name of the album: ")
+    query = f"https://api.spotify.com/v1/search?q={name}&type=album"
+    response = requests.get(query,
+                            headers={"Content-Type": "application/json",
+                                     "Authorization": f"Bearer {token}"})
 
-            print("Search results:")
+    # Check if there are any results
+    if len(response.json()[f"{type}s"]["items"]) == 0:
+        print("Nothing could be found.")
+    else:
+        for i, item in enumerate(response.json()["albums"]["items"]):
+            results.append([str(i + 1), item["name"],
+                           item["artists"][0]["name"]])
 
-            for item in response.json()[f"{type}s"]["items"]:
-                results.append(
-                    [str(i), item["name"], item["artists"][0]["name"]])
-                i += 1
-
+            # Print the search results
             print(SingleTable(results).table)
 
-            print("Which album would you like to work with?")
+            # Ask the user which album they want to work with and create an object
+            pos = int(input("Which artist would you like to work with? "))
+            album = c.Album(response.json()["albums"]["items"][pos - 1]["name"],
+                            response.json()["albums"]["items"][pos - 1]["id"], token)
+            return (album)

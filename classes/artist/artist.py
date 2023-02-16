@@ -1,5 +1,5 @@
 import api.exceptions as e
-import classes.artist.methods as m
+import classes.artist.methods as methods
 import env as env
 
 
@@ -7,34 +7,29 @@ class Artist(object):
 
     def __init__(self, name, id, token):
         self.name = name
-        self.artistID = id
+        self.id = id
+        self.url = f"https://open.spotify.com/artist/{id}"
         self.token = token
-        self.albums = []
-        self.tracks = []
-        self.genres = []
-        self.popularity = 0
-        self.followers = 0
-        self.fetch_artist()
+        self.fetch_artist_info()
         self.fetch_albums()
         self.fetch_tracks()
 
-    def fetch_artist(self):
+    def fetch_artist_info(self):
         print(f"Fetching information of {self.name}...")
         try:
-            res = m.fetch_artist(self.artistID)
+            self.info = methods.fetch_artist_info(self.id, self.token)
         except e.APIError as err:
             print(
                 "Error while fetching information of {}}...: {} ({})".format(self.name,
                                                                              err.code, e.code_to_str_dict[err.code]))
         else:
-            self.followers = res
-            # Set attributes
+            print(f"Successfully fetched information of {self.name}.")
 
     def fetch_albums(self):
         print(f"Fetching albums of {self.name}...")
         try:
-            self.albums = m.fetch_albums(
-                self.artistID, self.token)
+            self.albums = methods.fetch_albums(
+                self.id, self.token)
         except e.APIError as err:
             print(
                 f"Error while fetching albums of {self.name}: {err.code} ({e.code_to_str_dict[err.code]})")
@@ -45,7 +40,7 @@ class Artist(object):
     def fetch_tracks(self):
         print(f"Fetching tracks of {self.name}...")
         try:
-            self.tracks = m.fetch_tracks(
+            self.tracks = methods.fetch_tracks(
                 self.name, self.albums, self.token)
         except e.APIError as err:
             print(
@@ -55,10 +50,10 @@ class Artist(object):
                 f"Successfully fetched {len(self.tracks)} tracks of {self.name}.")
 
     def print_artist_info(self):
-        m.print_albums(self.albums)
+        methods.print_artist_info(self.name, self.id, self.url, self.info)
 
     def print_tracks(self):
-        m.print_tracks(self.tracks)
+        methods.print_tracks(self.tracks)
 
     def print_albums(self):
-        m.print_albums(self.albums)
+        methods.print_albums(self.albums)

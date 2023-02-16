@@ -1,8 +1,9 @@
-import cli.initialize as cli
+import cli.cli as cli
 
 
 def main():
-    cli.main()
+    instance = cli.CLI()
+    instance.get_credentials()
 
 
 if __name__ == "__main__":
