@@ -11,7 +11,7 @@ def fetch_albums(artist_id, token):
     counter = 0
 
     # Fetch albums until there are no more albums to be fetched
-    while limit_reached is False:
+    while not limit_reached:
 
         # Send a request to the Spotify API
         query = f"https://api.spotify.com/v1/artists/{artist_id}/albums?offset={counter}&limit=50"
