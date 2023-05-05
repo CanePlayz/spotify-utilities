@@ -5,10 +5,15 @@ import env as env
 
 
 class CLI(object):
-
     def __init__(self):
-        print("If you want to see all tracks or albums of an artist in the terminal, it is recommended to maximize the window.")
-        print("In order to make API requests, you need to create a Spotify application. Checking for saved credentials...")
+        self.client_id = None
+        self.client_secret = None
+        print(
+            "If you want to see all tracks or albums of an artist in the terminal, it is recommended to maximize the window."
+        )
+        print(
+            "In order to make API requests, you need to create a Spotify application. Checking for saved credentials..."
+        )
 
     def get_credentials(self):
         if env.check_for_credentials():
@@ -16,8 +21,10 @@ class CLI(object):
             self.client_id, self.client_secret = env.retrieve_credentials()
         else:
             print(
-                "No credentials found. Please enter your client ID and client secret.")
-            self.client_id, self.client_secret = env.enter_credentials()
+                "No credentials found. Please enter your client ID and client secret."
+            )
+            env.enter_credentials()
+            self.client_id, self.client_secret = env.retrieve_credentials()
         self.get_token()
 
     def get_token(self):
@@ -26,8 +33,10 @@ class CLI(object):
             self.token = env.get_token(self.client_id, self.client_secret)
         except:
             print(
-                "Could not retrieve token. Please check your credentials and enter them again.")
-            self.client_id, self.client_secret = env.enter_credentials()
+                "Could not retrieve token. Please check your credentials and enter them again."
+            )
+            env.enter_credentials()
+            self.client_id, self.client_secret = env.retrieve_credentials()
             self.get_token()
         else:
             print("Token successfully retrieved.")
