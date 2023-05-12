@@ -1,14 +1,15 @@
+from InquirerPy.prompts import ListPrompt as select
+
+from cli.prompts.style import style
+
+
 def continue_prompt():
+    # Ask user for input
+    proceed = select(
+        message="How would you like to continue?",
+        choices=["New search", "New command", "Exit"],
+        instruction="(Use arrow keys)",
+        style=style,
+    ).execute()
 
-    # Ask user for input as long as no valid input has been provided
-    while True:
-
-        next = input(
-            "How would you like to continue? (exit/new_search/new_command): ")
-
-        valid_inputs = ["exit", "new_search", "new_command"]
-
-        if any(next == check for check in valid_inputs):
-            return (next)
-        else:
-            print("Invalid input.")
+    return proceed

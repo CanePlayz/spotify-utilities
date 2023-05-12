@@ -1,9 +1,15 @@
+from InquirerPy.prompts import ListPrompt as select
+from cli.prompts.style import style
+
+
 def search_method(token):
-    # Ask user for input as long as no valid input has been provided
-    while True:
-        method = input("Search by ID or name? (id/name): ")
-        valid_inputs = ["id", "name"]
-        if any(method == check for check in valid_inputs):
-            return (method)
-        else:
-            print("Invalid input.")
+    """Ask the user which search method they want to use."""
+    # Ask user for input
+    method = select(
+        message="How would you like to search?",
+        choices=["By ID", "By name"],
+        instruction="(Use arrow keys)",
+        style=style,
+    ).execute()
+
+    return method

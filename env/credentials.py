@@ -1,9 +1,8 @@
-import base64
-
-import requests
 from cryptography.fernet import Fernet
+from InquirerPy.prompts import ConfirmPrompt as confirm
+from InquirerPy.prompts import InputPrompt as text_prompt
 
-import api.exceptions as exceptions
+from cli.prompts.style import style
 
 
 def check_for_credentials():
@@ -39,17 +38,34 @@ def load_encrypted_credentials():
         return enc_file.read()
 
 
-def enter_credentials():
-    """Prompts the user to enter their client ID and client secret."""
-    # Prompt the user to enter their client ID and client secret
-    client_id = input("Enter your client ID: ")
-    client_secret = input("Enter your client secret: ")
+def credentials_prompt():
+    """Prompts the user to enter their client ID and secret."""
+    # Prompt the user to enter their Client ID and Client Secret
+    client_id: str = text_prompt(
+        message="Please enter your Client ID:",
+        style=style,
+        validate=lambda result: len(result) == 32,
+        invalid_message="Client ID must have a length of 32 characters.",
+    ).execute()
+    client_secret: str = text_prompt(
+        message="Please enter your Client Secret:",
+        style=style,
+        validate=lambda result: len(result) == 32,
+        invalid_message="Client ID must have a length of 32 characters.",
+    ).execute()
 
-    # Check if the user entered a client ID and client secret
-    if not client_id.strip() or not client_secret.strip():
-        print("Error: Invalid client ID or secret.")
-        return
+    # Let the user confirm the credentials
+    print(f"Your Client ID: {client_id}")
+    print(f"Your Client Secret: {client_secret}")
+    proceed = confirm(message="Are these correct?", style=style).execute()
+    if not proceed:
+        enter_credentials()
 
+    return client_id, client_secret
+
+
+def encrypt_credentials(client_id: str, client_secret: str):
+    """Encrypts the client ID and secret and returns them."""
     # Generate a key to encrypt the credentials
     key = Fernet.generate_key()
     save_fernet_key(key)
@@ -58,6 +74,18 @@ def enter_credentials():
     fernet = Fernet(key)
     credentials = f"{client_id}:{client_secret}"
     encrypted_credentials = fernet.encrypt(credentials.encode())
+
+    return encrypted_credentials
+
+
+def enter_credentials():
+    """Prompts the user to enter their Client ID and Client Secret,
+    encrypts them and saves them to credentials.bin."""
+    # Prompt the user to enter their Client ID and Client Secret
+    client_id, client_secret = credentials_prompt()
+
+    # Encrypt the credentials
+    encrypted_credentials = encrypt_credentials(client_id, client_secret)
 
     # Write the encrypted credentials to credentials.bin
     save_encrypted_credentials(encrypted_credentials)
@@ -73,29 +101,9 @@ def retrieve_credentials():
     fernet = Fernet(key)
     decrypted_credentials = fernet.decrypt(encrypted_credentials).decode()
 
-    # Split the credentials into client ID and secret
-    client_id, client_secret = decrypted_credentials.split(":")
-    return client_id, client_secret
-
-
-def get_token(client_id, client_secret):
-    """Retrieves the access token from Spotify's API."""
-    # Prepare the client ID and client secret for the request
-    client_credentials = f"{client_id}:{client_secret}"
-    b64_token = base64.b64encode(client_credentials.encode()).decode()
-
-    # Make request to Spotify's API
-    url = "https://accounts.spotify.com/api/token"
-    response = requests.post(
-        url,
-        data={"grant_type": "client_credentials"},
-        headers={
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Authorization": f"Basic {b64_token}",
-        },
-    )
-
-    # Return the response
-    if response.status_code != 200:
-        raise exceptions.APIError(response.status_code)
-    return response.json()["access_token"]
+    # Try to split the credentials into client ID and secret
+    try:
+        client_id, client_secret = decrypted_credentials.split(":")
+        return client_id, client_secret
+    except ValueError:
+        raise

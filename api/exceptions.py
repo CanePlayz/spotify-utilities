@@ -2,6 +2,7 @@ exception_codes = [400, 401, 403, 404, 429, 500, 502, 503]
 
 
 class APIError(Exception):
+    """Raised when the Spotify API returns an error."""
 
     def __init__(self, code):
         self.code = code
