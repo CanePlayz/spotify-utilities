@@ -1,8 +1,9 @@
+from typing import Optional
+
+import classes
 import cli.prompts as prompts
 import cli.search as search
-import classes
 import env as env
-from typing import Optional
 
 
 class CLI(object):
@@ -137,10 +138,12 @@ class CLI(object):
         self.continue_prompt()
 
     def continue_prompt(self):
+        """Ask the user how they want to continue."""
         next = prompts.continue_prompt()
-        if next == "Exit":
-            exit()
-        elif next == "New Search":
-            self.get_search_method()
-        elif next == "New command":
+        if next == "New command":
             self.get_action()
+        elif next == "New search":
+            self.get_search_method()
+        elif next == "Exit":
+            print("Exiting...")
+            exit()

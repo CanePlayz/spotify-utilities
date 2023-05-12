@@ -7,7 +7,7 @@ def continue_prompt():
     # Ask user for input
     proceed = select(
         message="How would you like to continue?",
-        choices=["New search", "New command", "Exit"],
+        choices=["New command", "New search", "Exit"],
         instruction="(Use arrow keys)",
         style=style,
     ).execute()
