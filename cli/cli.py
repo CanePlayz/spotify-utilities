@@ -1,12 +1,10 @@
-from typing import Optional
-
 import classes
 import cli.prompts as prompts
 import cli.search as search
 import env as env
 
 
-class CLI(object):
+class CLI:
     """The main class of the CLI. It is responsible for the main loop and the flow of the program."""
 
     def __init__(self):
@@ -15,15 +13,15 @@ class CLI(object):
         self.client_secret: str = ""
         self.token: str = ""  # This is the token that is used to make API requests
         self.type: str = ""  # This is the type of object the user wants to work with
-        self.track: Optional[
-            classes.Track
-        ] = None  # This is the current track the user wants to work with
-        self.artist: Optional[
-            classes.Artist
-        ] = None  # This is the current artist the user wants to work with
-        self.album: Optional[
-            classes.Album
-        ] = None  # This is the current album the user wants to work with
+        self.track: classes.Track | None = (
+            None  # This is the current track the user wants to work with
+        )
+        self.artist: classes.Artist | None = (
+            None  # This is the current artist the user wants to work with
+        )
+        self.album: classes.Album | None = (
+            None  # This is the current album the user wants to work with
+        )
         self.action = None  # This is the action the user currently wants to perform
         print(
             "If you want to see all tracks or albums of an artist in the terminal, it is recommended to maximize the window."

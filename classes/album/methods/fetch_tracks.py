@@ -1,30 +1,49 @@
 import requests
 
 from api.exceptions import APIError
+from classes.album.album import Album
+from classes.artist.artist import Artist
+from classes.track.track import Track, TrackInfo
+from utilities.duration import convert_duration
 
 
 def fetch_tracks(album_id, token):
+    """Fetch an album's tracks from the Spotify API.
 
-    # Create variables
+    This function sends a GET request to the Spotify API for a specified album.
+    It creates and returns a dictionary with track IDs as keys and Track objects
+    as values.
+
+    Args:
+        album_id: The ID of the album whose tracks are to be fetched.
+        token: The Spotify API token for authentication.
+
+    Returns:
+        dict: A dictionary with track IDs as keys and Track objects as values.
+
+    Raises:
+        APIError: If an error occurs during the API request. The caller is
+        responsible for handling this error.
+    """
     tracks = {}
 
-    # Send a request to the Spotify API
-    query = f"https://api.spotify.com/v1/albums/{album_id}/tracks"
-    response = requests.get(query,
-                            headers={"Authorization": f"Bearer {token}"})
+    url = f"https://api.spotify.com/v1/albums/{album_id}/tracks"
+    response = requests.get(url, headers={"Authorization": f"Bearer {token}"})
 
-    # Check if the request was successful
-    match response.status_code:
-        case 200: pass
-        case _: raise APIError(response.status_code)
+    if response.status_code != 200:
+        raise APIError(response.status_code)
 
-    # Add the tracks with corresponding data to the tracks dictionary
-    for i, track in enumerate(response.json()["items"]):
-        tracks[i + 1] = {"id": track["id"],
-                         "name": track["name"],
-                         "artists": [i["name"] for i in track["artists"]],
-                         "length": str(track["duration_ms"] // 60000) + ":" + str(int((track["duration_ms"] % 60000) / 1000)).zfill(2) + " min",
-                         "spotify-url": track["external_urls"]["spotify"]
-                         }
-
-    return (tracks)
+    for track in response.json()["items"]:
+        _id = track["id"]
+        track_album = track["album"]
+        album = Album(track_album["name"], track_album["id"], token)
+        artists = {
+            artist["id"]: Artist(artist["name"], artist["id"], token)
+            for artist in track["artists"]
+        }
+        fetched_data: TrackInfo = {
+            "duration": convert_duration(track["duration_ms"]),
+            "explicit": track["explicit"],
+        }
+        tracks[_id] = Track(track["name"], _id, token, fetched_data, album, artists)
+    return tracks

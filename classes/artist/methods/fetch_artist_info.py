@@ -1,28 +1,43 @@
 import requests
 
 from api.exceptions import APIError
+from classes.artist.artist import ArtistInfo
 
 
-def fetch_artist_info(artist_id, token):
+def fetch_artist_info(artist_id: str, token: str) -> ArtistInfo:
+    """Fetch an artist's information from the Spotify API.
 
-    # Create variable
-    info = {}
+    This function sends a GET request to the Spotify API for the specified
+    artist and organizes the information into a dictionary.
 
-    # Send a request to the Spotify API
-    query = f"https://api.spotify.com/v1/artists/{artist_id}"
-    response = requests.get(query,
-                            headers={"Content-Type": "application/json",
-                                     "Authorization": f"Bearer {token}"})
+    Args:
+        artist_id: The ID of the artist whose information is to be fetched.
+        token: The Spotify API token for authentication.
 
-    # Check if the request was successful
-    match response.status_code:
-        case 200: pass
-        case _: raise APIError(response.status_code)
+    Returns:
+        dict: A dictionary with the artist's information.
 
-    # Return the response
+    Raises:
+        APIError: If an error occurs during the API request. The caller is
+            responsible for handling this error.
+    """
+    url = f"https://api.spotify.com/v1/artists/{artist_id}"
+    response = requests.get(
+        url,
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {token}",
+        },
+    )
 
-    info["genres"] = response.json()["genres"]
-    info["followers"] = response.json()["followers"]["total"]
-    info["popularity"] = response.json()["popularity"]
-    info["images"] = [i["url"] for i in response.json()["images"]]
-    return (info)
+    if response.status_code != 200:
+        raise APIError(response.status_code)
+
+    info_api = response.json()
+    info_dict: ArtistInfo = {
+        "genres": info_api["genres"],
+        "followers": info_api["followers"]["total"],
+        "popularity": info_api["popularity"],
+        "images": [i["url"] for i in info_api.json()["images"]],
+    }
+    return info_dict

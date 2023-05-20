@@ -1,36 +1,47 @@
 import requests
 
 from api.exceptions import APIError
+from classes.album.album import AlbumInfo
 
 
-def fetch_album_info(album_id, token):
+def fetch_album_info(album_id, token) -> AlbumInfo:
+    """Fetch an albums's information from the Spotify API.
 
-    # Create variable
-    info = {}
+    This function sends a GET request to the Spotify API for the specified
+    album and organizes the information into a dictionary.
 
-    # Send a request to the Spotify API
-    query = f"https://api.spotify.com/v1/albums/{album_id}"
-    response = requests.get(query,
-                            headers={"Content-Type": "application/json",
-                                     "Authorization": f"Bearer {token}"})
+    Args:
+        album_id: The ID of the album whose information is to be fetched.
+        token: The Spotify API token for authentication.
 
-    # Check if the request was successful
-    match response.status_code:
-        case 200: pass
-        case _: raise APIError(response.status_code)
+    Returns:
+        dict: A dictionary with the album's information.
 
-    # Return the response
+    Raises:
+        APIError: If an error occurs during the API request. The caller is
+            responsible for handling this error.
+    """
+    url = f"https://api.spotify.com/v1/albums/{album_id}"
+    response = requests.get(
+        url,
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {token}",
+        },
+    )
 
-    info["release_date"] = response.json()["release_date"]
-    info["artists"] = [i["name"] for i in response.json()["artists"]]
-    info["album_type"] = response.json()["album_type"].capitalize()
-    info["total_tracks"] = response.json()["total_tracks"]
-    info["genres"] = response.json()["genres"]
-    info["popularity"] = response.json()["popularity"]
-    info["label"] = response.json()["label"]
-    info["images"] = [i["url"] for i in response.json()["images"]]
-    info["copyright"] = [i["text"] for i in response.json()["copyrights"]]
-    # info["isrc"] = response.json()["external_ids"]["isrc"]
-    # info["ean"] = response.json()["external_ids"]["ean"]
-    # info["upc"] = response.json()["external_ids"]["upc"]
-    return (info)
+    if response.status_code != 200:
+        raise APIError(response.status_code)
+
+    info_api = response.json()
+    info_dict: AlbumInfo = {
+        "release_date": info_api["release_date"],
+        "album_type": info_api["album_type"].capitalize(),
+        "total_tracks": info_api["total_tracks"],
+        "genres": info_api["genres"],
+        "popularity": info_api["popularity"],
+        "label": info_api["label"],
+        "images": [image["url"] for image in info_api["images"]],
+        "copyright": [copyright["text"] for copyright in info_api["copyrights"]],
+    }
+    return info_dict
