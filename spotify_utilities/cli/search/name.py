@@ -3,8 +3,7 @@ from terminaltables import SingleTable
 from InquirerPy.prompts import ListPrompt as select
 from cli.prompts.style import style
 
-import classes as c
-import env as env
+from classes import Album, Artist, Track
 
 
 def ask_for_type():
@@ -50,7 +49,7 @@ def search_for_tracks(token):
             pos = int(
                 input("Which track would you like to work with? (Enter the number): ")
             )
-            track = c.Track(
+            track = Track(
                 response.json()["tracks"]["items"][pos - 1]["name"],
                 response.json()["tracks"]["items"][pos - 1]["id"],
                 token,
@@ -87,7 +86,7 @@ def search_for_artists(token):
             pos = int(
                 input("Which artist would you like to work with? (Enter the number): ")
             )
-            artist = c.Artist(
+            artist = Artist(
                 response.json()["artists"]["items"][pos - 1]["name"],
                 response.json()["artists"]["items"][pos - 1]["id"],
                 token,
@@ -124,7 +123,7 @@ def search_for_albums(token):
             pos = int(
                 input("Which album would you like to work with? (Enter the number): ")
             )
-            album = c.Album(
+            album = Album(
                 response.json()["albums"]["items"][pos - 1]["name"],
                 response.json()["albums"]["items"][pos - 1]["id"],
                 token,

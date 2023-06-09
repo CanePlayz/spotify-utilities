@@ -1,7 +1,8 @@
 import classes
 import cli.prompts as prompts
 import cli.search as search
-import env as env
+from api.credentials import *
+from api.token import *
 
 
 class CLI:
@@ -33,10 +34,10 @@ class CLI:
     def get_credentials(self):
         """Get the credentials from files or user input."""
         # Check if credentials are saved and try to receive them
-        if env.check_for_credentials():
+        if check_for_credentials():
             print("Credentials found.")
             try:
-                self.client_id, self.client_secret = env.retrieve_credentials()
+                self.client_id, self.client_secret = retrieve_credentials()
             except:
                 print("Could not retrieve credentials. Please enter them again.")
 
@@ -45,8 +46,8 @@ class CLI:
             print(
                 "No credentials found. Please enter your Client ID and Client Secret."
             )
-            env.enter_credentials()
-            self.client_id, self.client_secret = env.retrieve_credentials()
+            enter_credentials()
+            self.client_id, self.client_secret = retrieve_credentials()
 
         # Continue by getting the token
         self.get_token()
@@ -56,13 +57,13 @@ class CLI:
         # Try to get the token, if the token cannot be retrieved, ask the user for their credentials again
         print("Trying to get token...")
         try:
-            self.token = env.get_token(self.client_id, self.client_secret)
+            self.token = get_token(self.client_id, self.client_secret)
         except:
             print(
                 "Could not retrieve token. Please check your credentials and enter them again."
             )
-            env.enter_credentials()
-            self.client_id, self.client_secret = env.retrieve_credentials()
+            enter_credentials()
+            self.client_id, self.client_secret = retrieve_credentials()
             self.get_token()
         else:
             print("Token successfully retrieved.")

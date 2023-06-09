@@ -1,9 +1,14 @@
-from typing import TypedDict
+from __future__ import annotations
 
-import classes.track.methods
+from typing import TYPE_CHECKING, TypedDict
+
+import requests
 from api.exceptions import APIError
-from classes.album.album import Album
-from classes.artist.artist import Artist
+from utilities.duration import convert_duration
+
+if TYPE_CHECKING:
+    from classes.album import Album
+    from classes.artist import Artist
 
 
 class TrackInfo(TypedDict):
@@ -11,14 +16,6 @@ class TrackInfo(TypedDict):
 
     duration: str
     explicit: bool
-
-
-class ResponseDict(TypedDict):
-    """A dictionary with a response from the fetch track info method."""
-
-    info: TrackInfo
-    album: Album
-    artists: dict[str, Artist]
 
 
 class Track:
@@ -67,25 +64,64 @@ class Track:
 
     @property
     def info(self) -> TrackInfo | None:
-        """Return the track's detailed information.
-
-        If not already fetched, fetch it first.
-        """
+        """Return the track's information."""
         if not self._info:
             self.fetch_track_info()
         return self._info
 
-    def fetch_track_info(self):
-        """Fetch the track's detailed information.
+    @property
+    def album(self) -> Album:
+        """Return the track's album."""
+        if not self._album:
+            self.fetch_track_info()
+        return self._album
 
-        This method only has one fetch function because the track's artist(s)
-        and album can be easily added to the object with the same request.
-        """
+    @property
+    def artists(self) -> dict[str, Artist]:
+        """Return the track's artists."""
+        if not self._artists:
+            self.fetch_track_info()
+        return self._artists
+
+    def fetch_track_info(self):
+        """Fetch a track's information, album and artists from the Spotify
+        API."""
+        from classes.album import Album
+        from classes.artist import Artist
+
         print(f"Fetching track info for {self.name}...")
+
         try:
-            response = classes.track.methods.fetch_track_info(self._id, self.token)
-            self._info = response["info"]
-            self._artists = response["artists"]
-            self._album = response["album"]
+            url = f"https://api.spotify.com/v1/tracks/{self._id}"
+            response = requests.get(
+                url,
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.token}",
+                },
+            )
+            if response.status_code != 200:
+                raise APIError(response.status_code)
+
         except APIError as err:
             err.print_error("information", self.name)
+
+        else:
+            info_api = response.json()
+            info_dict: TrackInfo = {
+                "duration": convert_duration(info_api["duration_ms"]),
+                "explicit": info_api["explicit"],
+            }
+
+            album_api = info_api["album"]
+            album = Album(album_api["name"], album_api["id"], self.token)
+
+            artists_api = info_api["artists"]
+            artists = {
+                "id": Artist(artist["name"], artist["id"], self.token)
+                for artist in artists_api
+            }
+
+            self._info = info_dict
+            self._album = album
+            self._artists = artists

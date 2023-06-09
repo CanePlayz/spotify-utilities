@@ -83,11 +83,7 @@ def enter_credentials():
     encrypts them and saves them to credentials.bin."""
     # Prompt the user to enter their Client ID and Client Secret
     client_id, client_secret = credentials_prompt()
-
-    # Encrypt the credentials
     encrypted_credentials = encrypt_credentials(client_id, client_secret)
-
-    # Write the encrypted credentials to credentials.bin
     save_encrypted_credentials(encrypted_credentials)
 
 

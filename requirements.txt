@@ -1,4 +1,4 @@
-env==0.1.0
+cryptography==41.0.1
 InquirerPy==0.3.4
-Requests==2.30.0
+Requests==2.31.0
 terminaltables==3.1.10

@@ -1,3 +1,11 @@
+def check_value(value: str) -> str:
+    """Check if a value is known."""
+    if value == None or value == [] or value == "":
+        return "Unknown"
+    else:
+        return value
+
+
 def shorten_track(string):
     """Shortens track name to 30 characters"""
     if len(string) > 30:
