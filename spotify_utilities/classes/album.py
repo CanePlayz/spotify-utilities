@@ -6,7 +6,7 @@ import requests
 from api.exceptions import APIError
 from terminaltables import SingleTable
 from utilities.duration import convert_duration
-from utilities.tables import check_value
+from utilities.tables import check_value, shorten_string
 
 if TYPE_CHECKING:
     from classes.artist import Artist
@@ -84,7 +84,7 @@ class Album:
     def artists(self) -> dict[str, Artist]:
         """Return the album's artists."""
         if not self._artists:
-            self.fetch_artists()
+            self.fetch_album_info()
         return self._artists
 
     @property
@@ -96,7 +96,9 @@ class Album:
 
     def fetch_album_info(self):
         """Fetch an albums's information from the Spotify API."""
-        print(f"Fetching information of {self.name}...")
+        from classes.artist import Artist
+
+        print(f"Fetching information of '{self.name}'...")
 
         try:
             url = f"https://api.spotify.com/v1/albums/{self._id}"
@@ -128,43 +130,20 @@ class Album:
             }
             self._info = info
 
-            print(f"Successfully fetched information of {self.name}.")
-
-    def fetch_artists(self):
-        """Fetch an album's artists from the Spotify API."""
-        from classes.artist import Artist
-
-        print(f"Fetching artists of {self.name}...")
-
-        try:
-            url = f"https://api.spotify.com/v1/albums/{self._id}/artists"
-            response = requests.get(
-                url,
-                headers={
-                    "Authorization": f"Bearer {self.token}",
-                },
-            )
-            if response.status_code != 200:
-                raise APIError(response.status_code)
-
-        except APIError as e:
-            e.print_error("artists", self.name)
-
-        else:
-            artists_api = response.json()["artists"]
+            artists_api = info_api["artists"]
             self._artists = {
                 artist["id"]: Artist(artist["name"], artist["id"], self.token)
                 for artist in artists_api
             }
 
-            print(f"Successfully fetched {len(self._artists)} artists of {self.name}.")
+            print(f"Successfully fetched information of {self.name}.")
 
     def fetch_tracks(self):
         """Fetch an album's tracks from the Spotify API."""
         from classes.artist import Artist
         from classes.track import Track
 
-        print(f"Fetching tracks of {self.name}...")
+        print(f"Fetching tracks of '{self.name}'...")
 
         try:
             tracks = {}
@@ -186,8 +165,7 @@ class Album:
                     "duration": convert_duration(track["duration_ms"]),
                     "explicit": track["explicit"],
                 }
-                album_api = track["album"]
-                track_album = Album(album_api["name"], album_api["id"], self.token)
+                track_album = self
                 track_artists = {
                     artist["id"]: Artist(artist["name"], artist["id"], self.token)
                     for artist in track["artists"]
@@ -216,13 +194,13 @@ class Album:
         data.append(["ID", self._id])
         data.append(["Release date", check_value(self.info["release_date"])])
 
-        artist_names = [artist.name for artist in self._artists.values()]
+        artist_names = [artist.name for artist in self.artists.values()]
         if len(artist_names) == 1:
             data.append(["Artist", artist_names[0]])
         else:
             data.append(["Artists", ", ".join(artist_names)])
 
-        data.append(["Type", self.info["album_type"]])
+        data.append(["Type", self.info["album_type"].capitalize()])
         data.append(["Total tracks", self.info["total_tracks"]])
 
         genres = check_value(", ".join(self.info["genres"]))
@@ -235,9 +213,9 @@ class Album:
             image = self.info["images"][0]
         except IndexError:
             image = None
-        data.append("Cover", check_value(image))
+        data.append(["Cover", check_value(image)])
 
-        copyright = check_value(copyright(", ".join(self.info["copyright"])))
+        copyright = check_value(", ".join(self.info["copyright"]))
         data.append(["Copyright", copyright])
 
         data.append(["Spotify URL", self.url])
@@ -247,20 +225,23 @@ class Album:
     def print_tracks(self):
         """Prints a table of tracks to the terminal.
 
-        The table contains the following columns: Name, Artists, Length, ID and
+        The table contains the following columns: Name, Artists, Length, and
         Spotify URL. The table is printed using the terminaltables library.
         """
-        data = [["Name", "Artists", "Length", "ID", "Spotify URL"]]
+        data = [["Name", "Artists", "Length", "Spotify URL"]]
 
         # Create a list of rows for the table
         for track in self.tracks.values():
-            row = [
-                track.name,
-                ", ".join([artist.name for artist in track._artists.values()]),
-                track._info["duration"],
-                track._id,
-                track.url,
-            ]
-            data.append(row)
+            data.append(
+                [
+                    shorten_string(track.name, 32),
+                    shorten_string(
+                        ", ".join([artist.name for artist in track._artists.values()]),
+                        32,
+                    ),
+                    track._info["duration"],
+                    track.url,
+                ]
+            )
 
         print(SingleTable(data).table)

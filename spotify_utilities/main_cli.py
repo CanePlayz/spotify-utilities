@@ -1,7 +1,8 @@
 import sys
-from cli.cli import CLI
 
 sys.dont_write_bytecode = True
+
+from cli.cli import CLI
 
 
 def main():

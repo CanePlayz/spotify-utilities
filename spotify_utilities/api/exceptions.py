@@ -30,4 +30,4 @@ class APIError(Exception):
             name: The name of the object that caused the error.
         """
         message = self.code_to_str_dict.get(self.code, "Unknown Error")
-        print(f"Error while fetching {type} of {name}: {self.code} ({message})")
+        print(f"Error while fetching {type} of '{name}': {self.code} ({message})")

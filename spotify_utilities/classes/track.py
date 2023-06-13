@@ -89,7 +89,7 @@ class Track:
         from classes.album import Album
         from classes.artist import Artist
 
-        print(f"Fetching track info for {self.name}...")
+        print(f"Fetching track info for '{self.name}'...")
 
         try:
             url = f"https://api.spotify.com/v1/tracks/{self._id}"
