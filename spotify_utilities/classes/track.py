@@ -4,7 +4,9 @@ from typing import TYPE_CHECKING, TypedDict
 
 import requests
 from api.exceptions import APIError
+from terminaltables import SingleTable
 from utilities.duration import convert_duration
+from utilities.tables import check_value
 
 if TYPE_CHECKING:
     from classes.album import Album
@@ -125,3 +127,22 @@ class Track:
             self._info = info_dict
             self._album = album
             self._artists = artists
+
+    def print_track_info(self):
+        """Print a track's information.
+
+        The information is printed in a table with two columns: Property and
+        Value. The table is printed using the terminaltables library.
+        """
+        # Create a list of rows for the table
+        data = [["Property", "Value"]]
+        data.append(["Name", self.name])
+        data.append(
+            ["Artists", ", ".join(artist.name for artist in self.artists.values())]
+        )
+        data.append(["Duration", self.info["duration"]])
+        data.append(["Album", self.album.name])
+        data.append(["Explicit", "Yes" if self.info["explicit"] else "No"])
+        data.append(["Spotify URL", self.url])
+
+        print(SingleTable(data).table)

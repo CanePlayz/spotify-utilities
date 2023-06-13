@@ -228,15 +228,14 @@ class Album:
         The table contains the following columns: Name, Artists, Length, and
         Spotify URL. The table is printed using the terminaltables library.
         """
-        data = [["Name", "Artists", "Length", "Spotify URL"]]
-
         # Create a list of rows for the table
+        data = [["Name", "Artists", "Length", "Spotify URL"]]
         for track in self.tracks.values():
             data.append(
                 [
                     shorten_string(track.name, 32),
                     shorten_string(
-                        ", ".join([artist.name for artist in track._artists.values()]),
+                        ", ".join([artist.name for artist in track.artists.values()]),
                         32,
                     ),
                     track._info["duration"],
