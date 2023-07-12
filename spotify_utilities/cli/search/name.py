@@ -11,7 +11,7 @@ def ask_for_type():
     # Ask user for input
     type = select(
         message="What do you want to search for?",
-        choices=["Track", "Artist", "Album"],
+        choices=["Album", "Artist", "Track"],
         instruction="(Use arrow keys)",
         style=style,
     ).execute()
@@ -59,39 +59,45 @@ def search_for_tracks(token):
 
 def search_for_artists(token):
     # Create a list of search results
-    results = [["#", "Name"]]
+    table = [["#", "Name"]]
 
     # Send a search request to the Spotify API
     name = input(f"Enter the name of the artist: ")
-    query = f"https://api.spotify.com/v1/search?q={name}&type=artist"
+    query = f"https://api.spotify.com/v1/search"
+
     response = requests.get(
         query,
         headers={
             "Content-Type": "application/json",
             "Authorization": f"Bearer {token}",
         },
+        params={"q": name, "type": "artist", "market": "US"},
     )
 
     # Check if there are any results
-    if len(response.json()[f"artists"]["items"]) == 0:
+    results = response.json()
+    try:
+        items = results["artists"]["items"]
+    except KeyError:
         print("Nothing could be found.")
+        return None
     else:
-        for i, item in enumerate(response.json()["artists"]["items"]):
-            results.append([str(i + 1), item["name"]])
+        for number, item in enumerate(items):
+            table.append([str(number + 1), item["name"]])
 
             # Print the search results
-            print(SingleTable(results).table)
+            print(SingleTable(table).table)
 
             # Ask the user which artist they want to work with and create an object
             pos = int(
                 input("Which artist would you like to work with? (Enter the number): ")
             )
-            artist = Artist(
+            item = Artist(
                 response.json()["artists"]["items"][pos - 1]["name"],
                 response.json()["artists"]["items"][pos - 1]["id"],
                 token,
             )
-            return artist
+            return item
 
 
 def search_for_albums(token):

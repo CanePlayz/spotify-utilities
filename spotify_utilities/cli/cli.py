@@ -12,18 +12,19 @@ class CLI:
         """Initialize the CLI."""
         self.client_id: str = ""
         self.client_secret: str = ""
-        self.token: str = ""  # This is the token that is used to make API requests
-        self.type: str = ""  # This is the type of object the user wants to work with
+        self.token: str = ""  # The token that is used to make API requests
+        self.search_type: str = ""  # The search method the user wants to use
+        self.type: str = ""  # The type of object the user wants to work with
         self.track: classes.Track | None = (
-            None  # This is the current track the user wants to work with
+            None  # The current track the user wants to work with
         )
         self.artist: classes.Artist | None = (
-            None  # This is the current artist the user wants to work with
+            None  # The current artist the user wants to work with
         )
         self.album: classes.Album | None = (
-            None  # This is the current album the user wants to work with
+            None  # The current album the user wants to work with
         )
-        self.action = None  # This is the action the user currently wants to perform
+        self.action = None  # The action the user currently wants to perform
         print(
             "If you want to see all tracks or albums of an artist in the terminal, it is recommended to maximize the window."
         )
@@ -41,7 +42,7 @@ class CLI:
             except:
                 print("Could not retrieve credentials. Please enter them again.")
 
-        # If no credentials are saved, ask the user for them
+        # If no credentials are saved, ask the user for input
         else:
             print(
                 "No credentials found. Please enter your Client ID and Client Secret."
@@ -69,39 +70,47 @@ class CLI:
             print("Token successfully retrieved.")
 
             # Continue by asking the user for the search method they want to use
-            self.get_search_method()
+            self.ask_for_type()
+
+    def ask_for_type(self):
+        self.type = search.ask_for_type()
+        self.get_search_method()
 
     def get_search_method(self):
         """Ask the user for the search method they want to use."""
         # Ask user for input
-        self.type = search.search_method(self.token)
-        if self.type == "By ID":
+        self.search_type = search.search_method(self.token)
+        if self.search_type == "By ID":
             self.search_by_id()
-        elif self.type == "By name":
+        elif self.search_type == "By name":
             self.search_by_name()
 
     def search_by_id(self):
         """Search for an artist, album or track by ID."""
-        search.search_by_id(self.token)
+        if self.type == "Album":
+            self.album = search.search_for_album_by_id(self.token)
+        elif self.type == "Artist":
+            self.artist = search.search_for_artist_by_id(self.token)
+        elif self.type == "Track":
+            self.track = search.search_for_track_by_id(self.token)
+        self.get_action()
 
     def search_by_name(self):
         """Search for an artist, album or track by name."""
-        # Ask the user what they want to search for
-        self.type = search.ask_for_type()
 
         # Search for the object
         if self.type == "Track":
             self.track = search.search_for_tracks(self.token)
             if not self.track:
-                self.get_search_method()
+                self.ask_for_type()
         elif self.type == "Artist":
             self.artist = search.search_for_artists(self.token)
             if not self.artist:
-                self.get_search_method()
+                self.ask_for_type()
         elif self.type == "Album":
             self.album = search.search_for_albums(self.token)
             if not self.album:
-                self.get_search_method()
+                self.ask_for_type()
 
         # Continues by asking the user which action they want to perform
         self.get_action()
@@ -109,17 +118,21 @@ class CLI:
     def get_action(self):
         """Ask the user which action they want to perform."""
         if self.type == "Track":
-            pass
+            self.action = prompts.actions_track()
         elif self.type == "Artist":
-            self.action = prompts.actions_artist(self.artist)
+            self.action = prompts.actions_artist()
         elif self.type == "Album":
-            self.action = prompts.actions_album(self.album)
+            self.action = prompts.actions_album()
 
         self.perform_action()
 
     def perform_action(self):
-        if self.type == "Track":
-            pass
+        if self.type == "Album":
+            if self.album:
+                if self.action == "Print info":
+                    self.album.print_album_info()
+                elif self.action == "Print tracks":
+                    self.album.print_tracks()
         elif self.type == "Artist":
             if self.artist:
                 if self.action == "Print info":
@@ -128,12 +141,10 @@ class CLI:
                     self.artist.print_albums()
                 elif self.action == "Print tracks":
                     self.artist.print_tracks()
-        elif self.type == "Album":
-            if self.album:
+        elif self.type == "Track":
+            if self.track:
                 if self.action == "Print info":
-                    self.album.print_album_info()
-                elif self.action == "Print tracks":
-                    self.album.print_tracks()
+                    self.track.print_track_info()
         self.continue_prompt()
 
     def continue_prompt(self):
@@ -142,7 +153,7 @@ class CLI:
         if next == "New command":
             self.get_action()
         elif next == "New search":
-            self.get_search_method()
+            self.ask_for_type()
         elif next == "Exit":
             print("Exiting...")
             exit()
